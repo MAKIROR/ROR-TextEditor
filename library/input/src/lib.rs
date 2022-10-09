@@ -1,5 +1,7 @@
+use std::io;
+use std::io::Read;
+
 pub mod Input {
-    pub fn MatchInput(){
-        
+    pub fn MatchInput(value : char){
     }
 }
