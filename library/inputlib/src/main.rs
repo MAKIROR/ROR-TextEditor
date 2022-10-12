@@ -1,8 +1,11 @@
-pub mod Input {
-    pub mod RawMode {
-        pub fn ToCtrlByte(value : char) -> u8 {
+pub mod input {
+    pub mod processing {
+        pub fn to_ctrl_byte(value : char) -> u8 {
             let byte = value as u8;
             byte & 0b0001_1111
+        }
+        pub fn die(error : std::io::Error) {
+            panic!("{}",error);
         }
     }
 }
