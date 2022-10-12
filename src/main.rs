@@ -2,7 +2,7 @@ extern crate inputlib;
 
 use std::io::{self, stdout, Read};
 use termion::raw::IntoRawMode;
-use inputlib::input::processing::*;
+use inputlib::input::*;
 
 fn main() {
     let _stdout = stdout().into_raw_mode().unwrap();
