@@ -24,13 +24,14 @@ impl Editor {
         }
         Ok(())
     }
-    fn read_key() -> Result<(), std::io::Error> {
+    fn read_key() -> Result<Key,std::io::Error> {
         loop {
             if let Some(input) = io::stdin().lock().keys().next() {
                 return input;
             }
         }
     }
+    
     pub fn program_die(error : std::io::Error) {
         panic!("{}",error);
     }
