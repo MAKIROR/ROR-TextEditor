@@ -3,7 +3,7 @@ pub mod input {
         let byte = value as u8;
         byte & 0b0001_1111
     }
-    pub fn die(error : std::io::Error) {
+    pub fn program_die(error : std::io::Error) {
         panic!("{}",error);
     }
 }
