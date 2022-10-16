@@ -78,7 +78,11 @@ impl Editor {
         let Position { mut y, mut x } = self.cursor_position;
         let size = self.terminal.size();
         let height = self.document.len();
-        let width = size.width.saturating_sub(1) as usize;
+        let mut width = if let Some(row) = self.document.row(y) {
+            row.len()
+        } else {
+            0
+        };
         match key {
             Key::Up => y = y.saturating_sub(1),
             Key::Down => {
@@ -98,6 +102,16 @@ impl Editor {
             Key::End => x = width,
             _ => (),
         }
+
+        width = if let Some(row) = self.document.row(y) {
+            row.len()
+        } else {
+            0
+        };
+        if x > width {
+            x = width;
+        }
+
         self.cursor_position = Position { x, y }
     }
 
@@ -110,7 +124,10 @@ impl Editor {
             println!("Exit the program. Goodbye :D\r");
         } else {
             self.draw_rows();
-            Terminal::cursor_position(&self.cursor_position);
+            Terminal::cursor_position(&Position {
+                x: self.cursor_position.x.saturating_sub(self.offset.x),
+                y: self.cursor_position.y.saturating_sub(self.offset.y),
+            });
         }
         Terminal::cursor_show();
         Terminal::flush()
@@ -120,7 +137,7 @@ impl Editor {
         let height = self.terminal.size().height;
         for terminal_row in 0..height - 1 {
             Terminal::clear_current_line();
-            if let Some(row) = self.document.row(terminal_row as usize) {
+            if let Some(row) = self.document.row(terminal_row as usize + self.offset.y) {
                 self.draw_row(row);
             } else if terminal_row == height / 3 && self.document.is_empty() {
                 self.draw_welcome_message();
