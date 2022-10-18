@@ -86,6 +86,11 @@ impl Editor {
                 self.should_quit = true
             }
             Key::Ctrl('s') => self.save(),
+            Key::Ctrl('d') => {
+                if let Some(command) = self.prompt("").unwrap_or(None) {
+                    self.command_board(&command);
+                }
+            }
             Key::Char(c) => {
                 self.document.insert(&self.cursor_position, c);
                 self.move_cursor(Key::Right);
@@ -110,6 +115,46 @@ impl Editor {
         }
         self.scroll();
         Ok(())
+    }
+    fn command_board(&mut self,value: &str) -> Result<(), std::io::Error>{
+
+    let location = String::from(value);
+    let command :Vec<&str> = location.split(" ").collect();  
+        loop {
+            match &command[0][..] as &str {
+                "f" => {
+                    if command.len() != 2 {
+                        self.status_message = StatusMessage::from(format!("Unqualified find command."));
+                    }
+                    if let Some(position) = self.document.find(&command[1][..]) {
+                        self.cursor_position = position;
+                    } else {
+                        self.status_message = StatusMessage::from(format!("Not found :{}.", command[1]));
+                    }
+                    break;
+                }
+                "q" => break,
+                _ => break,
+            }
+        }
+        Ok(())
+    }
+
+    fn save(&mut self) {
+        if self.document.file_name.is_none() {
+            let new_name = self.prompt("Save as: ").unwrap_or(None);
+            if new_name.is_none() {
+                self.status_message = StatusMessage::from("Save aborted.".to_string());
+                return;
+            }
+            self.document.file_name = new_name;
+        }
+
+        if self.document.save().is_ok() {
+            self.status_message = StatusMessage::from("File saved successfully.".to_string());
+        } else {
+            self.status_message = StatusMessage::from("Error writing file!".to_string());
+        }
     }
 
     fn move_cursor(&mut self, key: Key) {
@@ -300,22 +345,6 @@ impl Editor {
             return Ok(None);
         }
         Ok(Some(result))
-    }
-    fn save(&mut self) {
-        if self.document.file_name.is_none() {
-            let new_name = self.prompt("Save as: ").unwrap_or(None);
-            if new_name.is_none() {
-                self.status_message = StatusMessage::from("Save aborted.".to_string());
-                return;
-            }
-            self.document.file_name = new_name;
-        }
-
-        if self.document.save().is_ok() {
-            self.status_message = StatusMessage::from("File saved successfully.".to_string());
-        } else {
-            self.status_message = StatusMessage::from("Error writing file!".to_string());
-        }
     }
 }
 
