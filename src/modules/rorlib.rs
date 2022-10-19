@@ -79,7 +79,7 @@ impl Editor {
                     self.status_message = StatusMessage::from(format!(
                         "WARNING! File has unsaved changes. Press Ctrl-Q {} more times to quit.",
                         self.quit_times
-                    ));;
+                    ));
                     self.quit_times -= 1;
                     return Ok(());
                 }
@@ -122,19 +122,24 @@ impl Editor {
     let command :Vec<&str> = location.split(" ").collect();  
         loop {
             match &command[0][..] as &str {
-                "f" => {
+                "find" => {
                     if command.len() != 2 {
-                        self.status_message = StatusMessage::from(format!("Unqualified find command."));
-                    }
-                    if let Some(position) = self.document.find(&command[1][..]) {
-                        self.cursor_position = position;
+                        self.status_message = StatusMessage::from(format!("Unqualified find command:{:?}.",command));
                     } else {
-                        self.status_message = StatusMessage::from(format!("Not found :{}.", command[1]));
+                        if let Some(position) = self.document.find(&command[1][..]) {
+                            self.status_message = StatusMessage::from(format!("Successful found :{}", command[1]));
+                            self.cursor_position = position;
+                        } else {
+                            self.status_message = StatusMessage::from(format!("Not found :{}.", command[1]));
+                        }
                     }
                     break;
                 }
-                "q" => break,
-                _ => break,
+                "quit" => break,
+                _ => {
+                    self.status_message = StatusMessage::from(format!("Not found :{:?}.", command));
+                    break;
+                },
             }
         }
         Ok(())

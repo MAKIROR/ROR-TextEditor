@@ -7,7 +7,12 @@ edition = "2021"
 
 [dependencies]
 termion = "*"
+regex = "*"
 unicode-segmentation = "*"
 
 [profile.release]
 panic = 'abort'
+opt-level = 3
+
+[profile.dev]
+opt-level = 0
