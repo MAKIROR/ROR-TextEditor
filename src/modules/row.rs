@@ -95,5 +95,4 @@ impl Row {
         }
         None
     }
-
 }

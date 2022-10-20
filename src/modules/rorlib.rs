@@ -117,31 +117,33 @@ impl Editor {
         Ok(())
     }
     fn command_board(&mut self,value: &str) -> Result<(), std::io::Error>{
-
-    let location = String::from(value);
-    let command :Vec<&str> = location.split(" ").collect();  
-        loop {
-            match &command[0][..] as &str {
-                "find" => {
-                    if command.len() != 2 {
-                        self.status_message = StatusMessage::from(format!("Unqualified find command:{:?}.",command));
-                    } else {
-                        if let Some(position) = self.document.find(&command[1][..]) {
-                            self.status_message = StatusMessage::from(format!("Successful found :{}", command[1]));
-                            self.cursor_position = position;
+        let location = String::from(value);
+        let command :Vec<&str> = location.split(" ").collect();  
+            loop {
+                match &command[0][..] as &str {
+                    "find" => {
+                        if command.len() != 2 {
+                            self.status_message = StatusMessage::from(format!("Unqualified find command:{:?}.",command));
                         } else {
-                            self.status_message = StatusMessage::from(format!("Not found :{}.", command[1]));
+                            if let Some(position) = self.document.find(&command[1][..]) {
+                                self.status_message = StatusMessage::from(format!("Successful found :{}", command[1]));
+                                self.cursor_position = position;
+                            } else {
+                                self.status_message = StatusMessage::from(format!("Not found :{}.", command[1]));
+                            }
                         }
+                        break;
                     }
-                    break;
+                    "quit"  => {
+                        self.status_message = StatusMessage::from(format!("Exit the command board"));
+                        break;
+                    }
+                    _ => {
+                        self.status_message = StatusMessage::from(format!("Not found :{:?}.", command));
+                        break;
+                    },
                 }
-                "quit" => break,
-                _ => {
-                    self.status_message = StatusMessage::from(format!("Not found :{:?}.", command));
-                    break;
-                },
             }
-        }
         Ok(())
     }
 
