@@ -3,7 +3,7 @@ A terminal text editor.
 
 
 ## Project structure
-This is a simple project, many places are done by watching hento's tutorial
+This is a simple project, Just be a Rust exercise:)
 ```
 ./
 ├── Cargo.lock
