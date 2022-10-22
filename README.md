@@ -48,4 +48,4 @@ try to start it when done.If successful you will see a screen like this
 ```
 ror [filename]
 ```
-![memory](images/001.png)
+![](images/001.png)
