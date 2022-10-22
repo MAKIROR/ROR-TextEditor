@@ -1,3 +1,4 @@
+
 use crate::Row;
 use crate::Position;
 use std::fs;
@@ -39,23 +40,26 @@ impl Document {
         }
         let new_row = self.rows.get_mut(at.y).unwrap().split(at.x);
         self.rows.insert(at.y + 1, new_row);
+        
     }
-    pub fn insert(&mut self, at: &Position, c: char) {
+    pub fn insert(&mut self, at: &Position, c: char) -> i32{
         if at.y > self.len() {
-            return;
+            return 0;
         }
         self.dirty = true;
         if c == '\n' {
             self.insert_line(at);
-            return;
+            return 1;
         }
         if at.y == self.len() {
             let mut row = Row::default();
             row.insert(0, c);
             self.rows.push(row);
+            return 0;
         } else {
             let row = self.rows.get_mut(at.y).unwrap();
             row.insert(at.x, c);
+            return 0;
         }
     }
     pub fn delete(&mut self, at: &Position) {

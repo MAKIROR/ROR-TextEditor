@@ -6,7 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-termion = "*"
+termion = "*" 
+# { git = "https://gitlab.redox-os.org/Jezza/termion.git", branch = "windows-support" }
 regex = "*"
 unicode-segmentation = "*"
 
@@ -16,3 +17,5 @@ opt-level = 3
 
 [profile.dev]
 opt-level = 0
+
+[patch.crates-io]

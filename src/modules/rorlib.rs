@@ -1,3 +1,4 @@
+
 use crate::Terminal;
 use termion::event::Key;
 use crate::Document;
@@ -60,11 +61,9 @@ impl Editor {
             if let Err(error) = self.refresh_screen() {
                 program_die(error);
             }
-
             if self.should_quit {
                 break;
             }
-            
             if let Err(error) = self.match_key() {
                 program_die(error);
             }
@@ -92,8 +91,13 @@ impl Editor {
                 }
             }
             Key::Char(c) => {
-                self.document.insert(&self.cursor_position, c);
-                self.move_cursor(Key::Right);
+                let result = self.document.insert(&self.cursor_position, c);
+                if result == 1 {
+                    self.move_cursor(Key::Down);
+                } else {
+                    self.move_cursor(Key::Right);
+                }
+
             }
             Key::Delete => self.document.delete(&self.cursor_position),
             Key::Backspace => {
@@ -116,7 +120,7 @@ impl Editor {
         self.scroll();
         Ok(())
     }
-    fn command_board(&mut self,value: &str) -> Result<(), std::io::Error>{
+    fn command_board(&mut self,value: &str) -> Result<(), std::io::Error> {
         let location = String::from(value);
         let command :Vec<&str> = location.split(" ").collect();  
             loop {
@@ -146,7 +150,6 @@ impl Editor {
             }
         Ok(())
     }
-
     fn save(&mut self) {
         if self.document.file_name.is_none() {
             let new_name = self.prompt("Save as: ").unwrap_or(None);
@@ -163,7 +166,6 @@ impl Editor {
             self.status_message = StatusMessage::from("Error writing file!".to_string());
         }
     }
-
     fn move_cursor(&mut self, key: Key) {
         let Position { mut y, mut x } = self.cursor_position;
         let size = self.terminal.size();
@@ -204,7 +206,6 @@ impl Editor {
 
         self.cursor_position = Position { x, y }
     }
-
     fn refresh_screen(&self) -> Result<(), std::io::Error> {
         Terminal::cursor_hide();          
         Terminal::cursor_position(&Position::default());
@@ -224,7 +225,6 @@ impl Editor {
         Terminal::cursor_show();
         Terminal::flush()
     }
-
     fn draw_rows(&self) {
         let height = self.terminal.size().height;
         for terminal_row in 0..height {
@@ -238,7 +238,6 @@ impl Editor {
             }
         }
     }
-
     pub fn draw_row(&self, row: &Row) {
         let width = self.terminal.size().width as usize;
         let start = self.offset.x;
@@ -246,8 +245,6 @@ impl Editor {
         let row = row.render(start, end);
         println!("{}\r", row)
     }
-    
-
     fn draw_welcome_message(&self) {
         let mut welcome_message = format!("ROR Text Editor -- version {}", VERSION);
         let width = self.terminal.size().width as usize;
@@ -258,7 +255,6 @@ impl Editor {
         welcome_message.truncate(width);
         println!("{}\r", welcome_message);
     }
-
     fn draw_status_bar(&self) {
         let mut status;
         let width = self.terminal.size().width as usize;
@@ -267,7 +263,6 @@ impl Editor {
         } else {
             ""
         };
-
         let mut file_name = "[No Name]".to_string();
         if let Some(name) = &self.document.file_name {
             file_name = name.clone();
@@ -306,7 +301,6 @@ impl Editor {
             print!("{}", text);
         }
     }
-
     fn scroll(&mut self) {
         let Position { x, y } = self.cursor_position;
         let width = self.terminal.size().width as usize;
@@ -359,7 +353,6 @@ struct StatusMessage {
     text: String,
     time: Instant,
 }
-
 impl StatusMessage {
     fn from(message: String) -> Self {
         Self {
