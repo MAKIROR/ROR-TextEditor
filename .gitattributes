@@ -1,1 +1,3 @@
 *.d linguist-language=rust
+*.sh linguist-language=shell
+*.toml linguist-language=toml
