@@ -114,6 +114,5 @@ impl Document {
         } else {
             None
         }
-        
     }
 }

@@ -1,1 +1,0 @@
-/home/makiror/ROR_Text/main/target/release/ror: /home/makiror/ROR_Text/main/src/main.rs /home/makiror/ROR_Text/main/src/modules/document.rs /home/makiror/ROR_Text/main/src/modules/rorlib.rs /home/makiror/ROR_Text/main/src/modules/row.rs /home/makiror/ROR_Text/main/src/modules/terminal.rs
