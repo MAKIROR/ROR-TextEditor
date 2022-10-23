@@ -144,6 +144,7 @@ impl Editor {
                                 self.status_message = StatusMessage::from(format!("Successful found :{}", command[1]));
                                 self.cursor_position = result.get(0);
                                 let number = 0;
+                                let len = result.len()
                                 loop {
                                     let key = Terminal::read_key()?;
                                     match key {
@@ -151,7 +152,6 @@ impl Editor {
                                             if number < result.len() {
                                                 self.cursor_position = result.get(number + 1);
                                                 let number = number +1;
-                                                let len = result.len();
                                             } else {
                                                 self.cursor_position = result.get(0);
                                                 let number = 0;
