@@ -6,6 +6,7 @@ use crate::Row;
 use termion::color;
 use std::time::{Duration,Instant};
 use std::env;
+use std::collections::BTreeSet;
 
 pub struct Editor {
     should_quit: bool,
@@ -139,9 +140,36 @@ impl Editor {
                         if command.len() != 2 {
                             self.status_message = StatusMessage::from(format!("Unqualified find command:{:?}.",command));
                         } else {
-                            if let Some(position) = self.document.find(&command[1][..]) {
+                            if let Some(results) = self.document.find(&command[1][..]) {
                                 self.status_message = StatusMessage::from(format!("Successful found :{}", command[1]));
-                                self.cursor_position = position;
+                                self.cursor_position = results.get(0);
+                                let number = 0;
+                                loop {
+                                    let key = Terminal::read_key()?;
+                                    match key {
+                                        Key::Right => {
+                                            if number < results.len() {
+                                                self.cursor_position = results.get(number + 1);
+                                                let number = number +1;
+                                                let len = results.len();
+                                            } else {
+                                                self.cursor_position = results.get(0);
+                                                let number = 0;
+                                            }
+                                        }
+                                        Key::Left => {
+                                            if number == 0 {
+                                                self.cursor_position = results.get(len - 1);
+                                                let number = len - 1;
+                                            } else {
+                                                self.cursor_position = results.get(number - 1);
+                                                let number = number - 1;
+                                            }
+                                        }
+                                        Key::Ctrl('q') 
+                                        | Key::Esc => break,
+                                    }
+                                }
                             } else {
                                 self.status_message = StatusMessage::from(format!("Not found :{}.", command[1]));
                             }
@@ -328,6 +356,7 @@ impl Editor {
         }
     }
     fn prompt(&mut self, prompt: &str) -> Result<Option<String>, std::io::Error> {
+        
         let mut result = String::new();
         loop {
             self.status_message = StatusMessage::from(format!("{}{}", prompt, result));

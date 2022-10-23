@@ -79,7 +79,11 @@ impl Document {
             return 1;
         } else {
             let row = self.rows.get_mut(at.y).unwrap();
-            row.delete(at.x);
+            if at.x != 0 || at.y == 0 {
+                row.delete(at.x -1);
+            } else {
+                row.delete(at.x);
+            }
             return 0;
         }
     }
@@ -97,12 +101,19 @@ impl Document {
     pub fn is_dirty(&self) -> bool {
         self.dirty
     }
-    pub fn find(&self, query: &str) -> Option<Position> {
+    pub fn find(&self, query: &str) -> Option<Vec<Position>> {
+        let mut result: Vec<Position> = Vec::new();
         for (y, row) in self.rows.iter().enumerate() {
             if let Some(x) = row.find(query) {
-                return Some(Position { x, y });
+                let value = Position { x, y };
+                result.push(value);
             }
         }
-        None
+        if result.len() > 0 {
+            return Some(result);
+        } else {
+            None
+        }
+        
     }
 }
