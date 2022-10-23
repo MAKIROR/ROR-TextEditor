@@ -1,4 +1,3 @@
-
 use std::cmp;
 use unicode_segmentation::UnicodeSegmentation;
 

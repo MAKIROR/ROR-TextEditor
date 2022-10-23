@@ -71,6 +71,12 @@ impl Editor {
     }
 
     fn match_key(&mut self) -> Result<(), std::io::Error> {
+        let Position { mut y, mut x } = self.cursor_position;
+        let mut width = if let Some(row) = self.document.row(y) {
+            row.len()
+        } else {
+            0
+        };
         let key = Terminal::read_key()?;
         match key {
             Key::Ctrl('q') => {
@@ -91,19 +97,23 @@ impl Editor {
                 }
             }
             Key::Char(c) => {
-                let result = self.document.insert(&self.cursor_position, c);
-                if result == 1 {
+                let insert_result = self.document.insert(&self.cursor_position, c);
+                if insert_result == 1 {
                     self.move_cursor(Key::Down);
                 } else {
                     self.move_cursor(Key::Right);
                 }
 
             }
-            Key::Delete => self.document.delete(&self.cursor_position),
             Key::Backspace => {
                 if self.cursor_position.x > 0 || self.cursor_position.y > 0 {
-                    self.move_cursor(Key::Left);
-                    self.document.delete(&self.cursor_position);
+                    let delete_result = self.document.delete(&self.cursor_position);
+                    if delete_result == 1 {
+                        self.move_cursor(Key::Up);
+                        x = width;
+                    } else {
+                        self.move_cursor(Key::Left);
+                    }
                 }
             }
             Key::Up 

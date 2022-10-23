@@ -62,18 +62,25 @@ impl Document {
             return 0;
         }
     }
-    pub fn delete(&mut self, at: &Position) {
+    pub fn delete(&mut self, at: &Position) -> i32 {
         let len = self.len();
+        
         if at.y >= len {
-            return;
+            return 0;
         }
         if at.x == self.rows.get_mut(at.y).unwrap().len() && at.y < len - 1 {
             let next_row = self.rows.remove(at.y + 1);
             let row = self.rows.get_mut(at.y).unwrap();
             row.append(&next_row);
+            return 0;
+        } else if at.y <= len && self.rows.get_mut(at.y).unwrap().len() == 0 {
+            let row = self.rows.get_mut(at.y).unwrap();
+            row.delete(at.x);
+            return 1;
         } else {
             let row = self.rows.get_mut(at.y).unwrap();
             row.delete(at.x);
+            return 0;
         }
     }
     pub fn save(&mut self) -> Result<(), Error> {
