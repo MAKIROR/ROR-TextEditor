@@ -1,8 +1,14 @@
 #!/bin/bash
 DIR=$(pwd)
 P='$PATH'
-echo $DIR
 CONTENT="export PATH="$DIR:$P""
+echo $DIR
 echo $CONTENT
-echo $CONTENT >> /etc/profile
-source /etc/profile
+
+if [ -z "`grep "$CONTENT" /etc/profile`" ]; then
+    echo $CONTENT >> /etc/profile
+    source /etc/profile
+else 
+    echo 'file already has variables'
+    exit 0
+fi
