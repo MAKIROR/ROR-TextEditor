@@ -140,29 +140,29 @@ impl Editor {
                         if command.len() != 2 {
                             self.status_message = StatusMessage::from(format!("Unqualified find command:{:?}.",command));
                         } else {
-                            if let Some(results) = self.document.find(&command[1][..]) {
+                            if let Some(result) = self.document.find(&command[1][..]) {
                                 self.status_message = StatusMessage::from(format!("Successful found :{}", command[1]));
-                                self.cursor_position = results.get(0);
+                                self.cursor_position = result.get(0);
                                 let number = 0;
                                 loop {
                                     let key = Terminal::read_key()?;
                                     match key {
                                         Key::Right => {
-                                            if number < results.len() {
-                                                self.cursor_position = results.get(number + 1);
+                                            if number < result.len() {
+                                                self.cursor_position = result.get(number + 1);
                                                 let number = number +1;
-                                                let len = results.len();
+                                                let len = result.len();
                                             } else {
-                                                self.cursor_position = results.get(0);
+                                                self.cursor_position = result.get(0);
                                                 let number = 0;
                                             }
                                         }
                                         Key::Left => {
                                             if number == 0 {
-                                                self.cursor_position = results.get(len - 1);
+                                                self.cursor_position = result.get(len - 1);
                                                 let number = len - 1;
                                             } else {
-                                                self.cursor_position = results.get(number - 1);
+                                                self.cursor_position = result.get(number - 1);
                                                 let number = number - 1;
                                             }
                                         }
