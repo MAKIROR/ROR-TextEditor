@@ -139,39 +139,47 @@ impl Editor {
                         if command.len() != 2 {
                             self.status_message = StatusMessage::from(format!("Unqualified find command:{:?}.",command));
                         } else {
-                            match self.document.find(&command[1][..]) {
-                                None => self.status_message = StatusMessage::from(format!("Not found :{}.", command[1])),
-                                Some(result) => {
-                                    self.status_message = StatusMessage::from(format!("Successful found :{}", command[1]));
-                                    self.cursor_position = result.get(0);
-                                    let number = 0;
-                                    let len = result.len();
-                                    loop {
-                                        let key = Terminal::read_key()?;
-                                        match key {
-                                            Key::Right => {
-                                                if number < result.len() {
-                                                    self.cursor_position = result.get(number + 1);
-                                                    let number = number +1;
-                                                } else {
-                                                    self.cursor_position = result.get(0);
-                                                    let number = 0;
-                                                }
+                            if let Some(results) = self.document.find(&command[1][..]) {
+
+                                let result = vec![];
+                                let i = 0;
+                                while result.len() <= results.len() {
+                                    result[0] = results.get(i);
+                                    i ++;
+                                }
+                                
+                                self.status_message = StatusMessage::from(format!("Successful found :{}", command[1]));
+                                self.cursor_position = result.get(0);
+                                let number = 0;
+                                let len = result.len();
+                                loop {
+                                    let key = Terminal::read_key()?;
+                                    match key {
+                                        Key::Right => {
+                                            if number < result.len() {
+                                                self.cursor_position = result.get(number + 1);
+                                                let number = number + 1;
+                                            } else {
+                                                self.cursor_position = result.get(0);
+                                                let number = 0;
                                             }
-                                            Key::Left => {
-                                                if number == 0 {
-                                                    self.cursor_position = result.get(len - 1);
-                                                    let number = len - 1;
-                                                } else {
-                                                    self.cursor_position = result.get(number - 1);
-                                                    let number = number - 1;
-                                                }
-                                            }
-                                            Key::Ctrl('q') 
-                                            | Key::Esc => break,
                                         }
+                                        Key::Left => {
+                                            if number == 0 {
+                                                self.cursor_position = result.get(len - 1);
+                                                let number = len - 1;
+                                            } else {
+                                                self.cursor_position = result.get(number - 1);
+                                                let number = number - 1;
+                                            }
+                                        }
+                                        Key::Ctrl('q') 
+                                        | Key::Esc => break,
                                     }
                                 }
+                            } else {
+                                self.status_message = StatusMessage::from(format!("Not found :{}.", command[1]));
+                            }
                         }
                         break;
                     }
