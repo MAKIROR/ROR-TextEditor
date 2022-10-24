@@ -172,7 +172,6 @@ impl Editor {
                                         }
                                     }
                                 }
-                            }
                         }
                         break;
                     }
