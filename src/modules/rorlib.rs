@@ -6,7 +6,6 @@ use crate::Row;
 use termion::color;
 use std::time::{Duration,Instant};
 use std::env;
-use std::collections::BTreeSet;
 
 pub struct Editor {
     should_quit: bool,
@@ -140,38 +139,39 @@ impl Editor {
                         if command.len() != 2 {
                             self.status_message = StatusMessage::from(format!("Unqualified find command:{:?}.",command));
                         } else {
-                            if let Some(result) = self.document.find(&command[1][..]) {
-                                self.status_message = StatusMessage::from(format!("Successful found :{}", command[1]));
-                                self.cursor_position = result.get(0);
-                                let number = 0;
-                                let len = result.len()
-                                loop {
-                                    let key = Terminal::read_key()?;
-                                    match key {
-                                        Key::Right => {
-                                            if number < result.len() {
-                                                self.cursor_position = result.get(number + 1);
-                                                let number = number +1;
-                                            } else {
-                                                self.cursor_position = result.get(0);
-                                                let number = 0;
+                            match self.document.find(&command[1][..]) {
+                                None => self.status_message = StatusMessage::from(format!("Not found :{}.", command[1])),
+                                Some(result) => {
+                                    self.status_message = StatusMessage::from(format!("Successful found :{}", command[1]));
+                                    self.cursor_position = result.get(0);
+                                    let number = 0;
+                                    let len = result.len();
+                                    loop {
+                                        let key = Terminal::read_key()?;
+                                        match key {
+                                            Key::Right => {
+                                                if number < result.len() {
+                                                    self.cursor_position = result.get(number + 1);
+                                                    let number = number +1;
+                                                } else {
+                                                    self.cursor_position = result.get(0);
+                                                    let number = 0;
+                                                }
                                             }
-                                        }
-                                        Key::Left => {
-                                            if number == 0 {
-                                                self.cursor_position = result.get(len - 1);
-                                                let number = len - 1;
-                                            } else {
-                                                self.cursor_position = result.get(number - 1);
-                                                let number = number - 1;
+                                            Key::Left => {
+                                                if number == 0 {
+                                                    self.cursor_position = result.get(len - 1);
+                                                    let number = len - 1;
+                                                } else {
+                                                    self.cursor_position = result.get(number - 1);
+                                                    let number = number - 1;
+                                                }
                                             }
+                                            Key::Ctrl('q') 
+                                            | Key::Esc => break,
                                         }
-                                        Key::Ctrl('q') 
-                                        | Key::Esc => break,
                                     }
                                 }
-                            } else {
-                                self.status_message = StatusMessage::from(format!("Not found :{}.", command[1]));
                             }
                         }
                         break;

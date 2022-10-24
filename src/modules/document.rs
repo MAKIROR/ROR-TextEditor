@@ -105,7 +105,8 @@ impl Document {
         let mut result: Vec<Position> = Vec::new();
         for (y, row) in self.rows.iter().enumerate() {
             if let Some(x) = row.find(query) {
-                result.push(Position { x, y });
+                let vector = Position { x, y };
+                result.push(vector);
             }
         }
         if result.len() > 0 {
