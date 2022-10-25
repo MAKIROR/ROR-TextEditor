@@ -17,7 +17,7 @@ pub struct Editor {
     quit_times: u8,
 }
 
-#[derive(Default)]
+#[derive(Default,Copy, Clone)]
 pub struct Position {
     pub x: usize,
     pub y: usize,
@@ -71,8 +71,8 @@ impl Editor {
     }
 
     fn match_key(&mut self) -> Result<(), std::io::Error> {
-        let Position { mut y, mut x } = self.cursor_position;
-        let mut width = if let Some(row) = self.document.row(y) {
+        let Position { y, mut x } = self.cursor_position;
+        let width = if let Some(row) = self.document.row(y) {
             row.len()
         } else {
             0
@@ -139,44 +139,13 @@ impl Editor {
                         if command.len() != 2 {
                             self.status_message = StatusMessage::from(format!("Unqualified find command:{:?}.",command));
                         } else {
-                            if let Some(results) = self.document.find(&command[1][..]) {
-
-                                let result = vec![];
-                                let i = 0;
-                                while result.len() <= results.len() {
-                                    result[0] = results.get(i);
-                                    i ++;
-                                }
-                                
-                                self.status_message = StatusMessage::from(format!("Successful found :{}", command[1]));
-                                self.cursor_position = result.get(0);
-                                let number = 0;
+                            if let Some(result) = self.document.find(&command[1][..]) {
+                                self.status_message = StatusMessage::from(format!("Successful found in {0} lines:{1}", result.len(),command[1]));
+                                let mut number = 1;
+                                let pos = if let Some(pos) = result.get(number-1) { pos } else { todo!() };
+                                self.cursor_position = *pos;
+                                self.scroll();
                                 let len = result.len();
-                                loop {
-                                    let key = Terminal::read_key()?;
-                                    match key {
-                                        Key::Right => {
-                                            if number < result.len() {
-                                                self.cursor_position = result.get(number + 1);
-                                                let number = number + 1;
-                                            } else {
-                                                self.cursor_position = result.get(0);
-                                                let number = 0;
-                                            }
-                                        }
-                                        Key::Left => {
-                                            if number == 0 {
-                                                self.cursor_position = result.get(len - 1);
-                                                let number = len - 1;
-                                            } else {
-                                                self.cursor_position = result.get(number - 1);
-                                                let number = number - 1;
-                                            }
-                                        }
-                                        Key::Ctrl('q') 
-                                        | Key::Esc => break,
-                                    }
-                                }
                             } else {
                                 self.status_message = StatusMessage::from(format!("Not found :{}.", command[1]));
                             }
