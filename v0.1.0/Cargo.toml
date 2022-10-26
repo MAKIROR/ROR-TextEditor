@@ -17,5 +17,3 @@ opt-level = 3
 
 [profile.dev]
 opt-level = 0
-
-[patch.crates-io]

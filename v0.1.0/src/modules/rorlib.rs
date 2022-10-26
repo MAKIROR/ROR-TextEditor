@@ -6,7 +6,7 @@ use crate::Row;
 use termion::color;
 use std::time::{Duration,Instant};
 use std::env;
-use std::collections::BTreeSet;
+use regex::Regex;
 
 pub struct Editor {
     should_quit: bool,
@@ -18,7 +18,7 @@ pub struct Editor {
     quit_times: u8,
 }
 
-#[derive(Default)]
+#[derive(Default,Copy, Clone)]
 pub struct Position {
     pub x: usize,
     pub y: usize,
@@ -72,8 +72,8 @@ impl Editor {
     }
 
     fn match_key(&mut self) -> Result<(), std::io::Error> {
-        let Position { mut y, mut x } = self.cursor_position;
-        let mut width = if let Some(row) = self.document.row(y) {
+        let Position { y, mut x } = self.cursor_position;
+        let width = if let Some(row) = self.document.row(y) {
             row.len()
         } else {
             0
@@ -141,37 +141,28 @@ impl Editor {
                             self.status_message = StatusMessage::from(format!("Unqualified find command:{:?}.",command));
                         } else {
                             if let Some(result) = self.document.find(&command[1][..]) {
-                                self.status_message = StatusMessage::from(format!("Successful found :{}", command[1]));
-                                self.cursor_position = result.get(0);
-                                let number = 0;
-                                let len = result.len()
-                                loop {
-                                    let key = Terminal::read_key()?;
-                                    match key {
-                                        Key::Right => {
-                                            if number < result.len() {
-                                                self.cursor_position = result.get(number + 1);
-                                                let number = number +1;
-                                            } else {
-                                                self.cursor_position = result.get(0);
-                                                let number = 0;
-                                            }
-                                        }
-                                        Key::Left => {
-                                            if number == 0 {
-                                                self.cursor_position = result.get(len - 1);
-                                                let number = len - 1;
-                                            } else {
-                                                self.cursor_position = result.get(number - 1);
-                                                let number = number - 1;
-                                            }
-                                        }
-                                        Key::Ctrl('q') 
-                                        | Key::Esc => break,
-                                    }
-                                }
+                                self.status_message = StatusMessage::from(format!("Successful found in {0} lines:{1}", result.len(),command[1]));
+                                let number = 1;
+                                let pos = if let Some(pos) = result.get(number-1) { pos } else { todo!() };
+                                self.cursor_position = *pos;
+                                self.scroll();
+                                let len = result.len();
                             } else {
                                 self.status_message = StatusMessage::from(format!("Not found :{}.", command[1]));
+                            }
+                        }
+                        break;
+                    }
+                    "rename" => {
+                        if command.len() != 2 {
+                            self.status_message = StatusMessage::from(format!("Unqualified rename command:{:?}.",command));
+                        } else {
+                            let r = Regex::new(r"[/\^:]+").unwrap();
+                            if r.is_match(command[1]) {
+                                self.status_message = StatusMessage::from(format!("Unqualified file name:{}.",command[1]));
+                            } else {
+                                self.document.file_name = Some(command[1].to_string());
+                                self.status_message = StatusMessage::from(format!("Successfully changed the filename to:{}.",command[1]));
                             }
                         }
                         break;
@@ -206,6 +197,7 @@ impl Editor {
     }
     fn move_cursor(&mut self, key: Key) {
         let Position { mut y, mut x } = self.cursor_position;
+        let terminal_height = self.terminal.size().height as usize;
         let size = self.terminal.size();
         let height = self.document.len();
         let mut width = if let Some(row) = self.document.row(y) {
@@ -220,14 +212,40 @@ impl Editor {
                     y = y.saturating_add(1)
                 }
             }
-            Key::Left => x = x.saturating_sub(1),
-            Key::Right => {
-                if x < width {
-                    x = x.saturating_add(1)
+            Key::Left => {
+                if x > 0 {
+                    x -= 1;
+                } else if y > 0 {
+                    y -= 1;
+                    if let Some(row) = self.document.row(y) {
+                        x = row.len();
+                    } else {
+                        x = 0;
+                    }
                 }
             }
-            Key::PageUp => y=0,
-            Key::PageDown => y=height,
+            Key::Right => {
+                if x < width {
+                    x += 1;
+                } else if y < height {
+                    y += 1;
+                    x = 0;
+                }
+            }
+            Key::PageUp => {
+                y = if y > terminal_height {
+                    y - terminal_height
+                } else {
+                    0
+                }
+            }
+            Key::PageDown => {
+                y = if y.saturating_add(terminal_height) < height {
+                    y + terminal_height as usize
+                } else {
+                    height
+                }
+            }
             Key::Home => x=0,
             Key::End => x = width,
             _ => (),
