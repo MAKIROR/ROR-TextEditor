@@ -49,3 +49,5 @@ try to start it when done.If successful you will see a screen like this
 ror [filename]
 ```
 ![](images/001.png)
+
+## How to use
