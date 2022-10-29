@@ -142,11 +142,46 @@ impl Editor {
                         } else {
                             if let Some(result) = self.document.find(&command[1][..]) {
                                 self.status_message = StatusMessage::from(format!("Successful found in {0} lines:{1}", result.len(),command[1]));
-                                let number = 1;
+                                let mut number = 1;
                                 let pos = if let Some(pos) = result.get(number-1) { pos } else { todo!() };
                                 self.cursor_position = *pos;
                                 self.scroll();
                                 let len = result.len();
+
+                                loop {
+                                    let key = Terminal::read_key()?;
+                                    match key {
+                                        Key::Right => {
+                                            if number == len {
+                                                number = 1;
+                                                let pos = if let Some(pos) = result.get(number-1) { pos } else { todo!() };
+                                                self.cursor_position = *pos;
+                                                self.scroll();
+                                            } else {
+                                                number = number + 1;
+                                                let pos = if let Some(pos) = result.get(number-1) { pos } else { todo!() };
+                                                self.cursor_position = *pos;
+                                                self.scroll();
+                                            }
+                                        }
+                                        Key::Left => {
+                                            if number == 1 {
+                                                number = len;
+                                                let pos = if let Some(pos) = result.get(number-1) { pos } else { todo!() };
+                                                self.cursor_position = *pos;
+                                                self.scroll();
+                                            } else {
+                                                number = number - 1;
+                                                let pos = if let Some(pos) = result.get(number-1) { pos } else { todo!() };
+                                                self.cursor_position = *pos;
+                                                self.scroll();
+                                            }
+                                        }
+                                        Key::Esc | Key::Ctrl('q') => break,
+                                        _ => (),
+                                    }
+                                }
+
                             } else {
                                 self.status_message = StatusMessage::from(format!("Not found :{}.", command[1]));
                             }
