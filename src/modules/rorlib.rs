@@ -167,6 +167,7 @@ impl Editor {
                         }
                         break;
                     }
+                    "save" => self.save(),
                     "quit"  => {
                         self.status_message = StatusMessage::from(format!("Exit the command board"));
                         break;
