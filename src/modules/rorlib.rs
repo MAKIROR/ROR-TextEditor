@@ -134,7 +134,7 @@ impl Editor {
     fn command_board(&mut self,value: &str) -> Result<(), std::io::Error> {
         let location = String::from(value);
         let command :Vec<&str> = location.split(" ").collect();  
-            loop {
+            'cb: loop {
                 match &command[0][..] as &str {
                     "find" => {
                         if command.len() != 2 {
@@ -148,7 +148,7 @@ impl Editor {
                                 self.scroll();
                                 let len = result.len();
 
-                                loop {
+                                'find: loop {
                                     let key = Terminal::read_key()?;
                                     match key {
                                         Key::Right => {
