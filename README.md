@@ -31,7 +31,7 @@ Download rortext.tar from 'release' branch. Put it in the directory you want to 
 ```
 unzip it:
 ```
-tar –xvf rortext.tar
+tar xvf rortext.tar
 ```
 You will see a directory like this
 ```
