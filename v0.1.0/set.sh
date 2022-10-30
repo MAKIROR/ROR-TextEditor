@@ -1,7 +1,7 @@
 #!/bin/bash
 DIR=$(pwd)
 P='$PATH'
-CONTENT="export PATH="$DIR:$P""
+CONTENT="export PATH="$P:$DIR""
 echo $DIR
 echo $CONTENT
 
