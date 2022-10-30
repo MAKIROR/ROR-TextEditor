@@ -215,6 +215,9 @@ impl Editor {
             }
         Ok(())
     }
+    fn find(&mut self,value:String) {
+        //TODO::Find in doc
+    }
     fn save(&mut self) {
         if self.document.file_name.is_none() {
             let new_name = self.prompt("Save as: ").unwrap_or(None);
