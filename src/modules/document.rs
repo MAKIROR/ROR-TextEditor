@@ -101,18 +101,14 @@ impl Document {
     pub fn is_dirty(&self) -> bool {
         self.dirty
     }
-    pub fn find(&self, query: &str) -> Option<Vec<Position>> {
-        let mut result: Vec<Position> = Vec::new();
-        for (y, row) in self.rows.iter().enumerate() {
-            if let Some(x) = row.find(query) {
-                let vector = Position { x, y };
-                result.push(vector);
+    pub fn find(&self, query: &str, after: &Position) -> Option<Position> {
+        let mut x = after.x;
+        for (y, row) in self.rows.iter().enumerate().skip(after.y) {
+            if let Some(x) = row.find(query, x) {
+                return Some(Position { x, y });
             }
+            x = 0;
         }
-        if result.len() > 0 {
-            return Some(result);
-        } else {
-            None
-        }
+        None
     }
 }

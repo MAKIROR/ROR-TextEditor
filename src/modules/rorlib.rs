@@ -93,7 +93,7 @@ impl Editor {
             }
             Key::Ctrl('s') => self.save(),
             Key::Ctrl('d') => {
-                if let Some(command) = self.prompt("").unwrap_or(None) {
+                if let Some(command) = self.prompt("",|_, _, _|{}).unwrap_or(None) {
                     self.command_board(&command);
                 }
             }
@@ -134,56 +134,43 @@ impl Editor {
     fn command_board(&mut self,value: &str) -> Result<(), std::io::Error> {
         let location = String::from(value);
         let command :Vec<&str> = location.split(" ").collect();  
-            'cb: loop {
+            loop {
                 match &command[0][..] as &str {
                     "find" => {
                         if command.len() != 2 {
                             self.status_message = StatusMessage::from(format!("Unqualified find command:{:?}.",command));
                         } else {
-                            if let Some(result) = self.document.find(&command[1][..]) {
-                                self.status_message = StatusMessage::from(format!("Successful found in {0} lines:{1}", result.len(),command[1]));
-                                let mut number = 1;
-                                let pos = if let Some(pos) = result.get(number-1) { pos } else { todo!() };
-                                self.cursor_position = *pos;
-                                self.scroll();
-                                let len = result.len();
-
-                                'find: loop {
-                                    let key = Terminal::read_key()?;
-                                    match key {
-                                        Key::Right => {
-                                            if number == len {
-                                                number = 1;
-                                                let pos = if let Some(pos) = result.get(number-1) { pos } else { todo!() };
-                                                self.cursor_position = *pos;
-                                                self.scroll();
-                                            } else {
-                                                number = number + 1;
-                                                let pos = if let Some(pos) = result.get(number-1) { pos } else { todo!() };
-                                                self.cursor_position = *pos;
-                                                self.scroll();
+                            let old_position = self.cursor_position.clone();
+                            if let Some(query) = self
+                                .prompt(
+                                    "Found something(ESC to quit)",
+                                    |editor, key, query| {
+                                        let mut moved = false;
+                                        match key {
+                                            Key::Right | Key::Down => {
+                                                editor.move_cursor(Key::Right);
+                                                moved = true;
                                             }
+                                            _ => (),
                                         }
-                                        Key::Left => {
-                                            if number == 1 {
-                                                number = len;
-                                                let pos = if let Some(pos) = result.get(number-1) { pos } else { todo!() };
-                                                self.cursor_position = *pos;
-                                                self.scroll();
-                                            } else {
-                                                number = number - 1;
-                                                let pos = if let Some(pos) = result.get(number-1) { pos } else { todo!() };
-                                                self.cursor_position = *pos;
-                                                self.scroll();
-                                            }
+                                        if let Some(position) = editor.document.find(&query, &editor.cursor_position) {
+                                            editor.cursor_position = position;
+                                            editor.scroll();
+                                        } else if moved {
+                                            editor.move_cursor(Key::Left);
                                         }
-                                        Key::Esc | Key::Ctrl('q') => break,
-                                        _ => (),
                                     }
+                                )
+                                .unwrap_or(None)
+                            {
+                                if let Some(position) = self.document.find(&query[..], &old_position) {
+                                    self.cursor_position = position;
+                                } else {
+                                    self.status_message = StatusMessage::from(format!("Not found :{}.", query));
                                 }
-
                             } else {
-                                self.status_message = StatusMessage::from(format!("Not found :{}.", command[1]));
+                                self.cursor_position = old_position;
+                                self.scroll();
                             }
                         }
                         break;
@@ -202,7 +189,6 @@ impl Editor {
                         }
                         break;
                     }
-                    "save" => self.save(),
                     "quit"  => {
                         self.status_message = StatusMessage::from(format!("Exit the command board"));
                         break;
@@ -215,12 +201,9 @@ impl Editor {
             }
         Ok(())
     }
-    fn find(&mut self,value:String) {
-        //TODO::Find in doc
-    }
     fn save(&mut self) {
         if self.document.file_name.is_none() {
-            let new_name = self.prompt("Save as: ").unwrap_or(None);
+            let new_name = self.prompt("Save as: ", |_, _, _| {}).unwrap_or(None);
             if new_name.is_none() {
                 self.status_message = StatusMessage::from("Save aborted.".to_string());
                 return;
@@ -412,13 +395,16 @@ impl Editor {
             offset.x = x.saturating_sub(width).saturating_add(1);
         }
     }
-    fn prompt(&mut self, prompt: &str) -> Result<Option<String>, std::io::Error> {
-        
+    fn prompt<C>(&mut self, prompt: &str, callback: C) -> Result<Option<String>, std::io::Error>
+    where
+        C: Fn(&mut Self, Key, &String),
+    {
         let mut result = String::new();
         loop {
             self.status_message = StatusMessage::from(format!("{}{}", prompt, result));
             self.refresh_screen()?;
-            match Terminal::read_key()? {
+            let key = Terminal::read_key()?;
+            match key {
                 Key::Backspace => {
                     if !result.is_empty() {
                         result.truncate(result.len() - 1);
@@ -436,6 +422,7 @@ impl Editor {
                 }
                 _ => (),
             }
+            callback(self, key, &result);
         }
         self.status_message = StatusMessage::from(String::new());
         if result.is_empty() {
