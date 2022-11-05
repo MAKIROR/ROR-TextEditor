@@ -22,6 +22,7 @@ mod row;
 
 use std::io::{self, stdout};
 use rorlib::Editor;
+pub use rorlib::SearchDirection;
 pub use terminal::Terminal;
 pub use rorlib::Position;
 pub use document::Document;
