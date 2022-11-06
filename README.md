@@ -50,4 +50,17 @@ ror [filename]
 ```
 ![](images/001.png)
 
-## How to use
+## How to use(v0.1.0)
+
+### Move
+You can use the arrow keys to move the cursor.
+
+### Hot key
+```
+Ctrl+s: Save, if the filename is empty, it will let you type
+Ctrl+q: Quit program, press three times to force quit without saving
+Ctrl+d: Command board
+```
+
+### Command
+

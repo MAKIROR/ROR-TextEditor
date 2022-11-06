@@ -38,14 +38,14 @@ const QUIT_TIMES: u8 = 3;
 impl Editor {
     pub fn default() -> Self {
         let args: Vec<String> = env::args().collect();
-        let mut initial_status = String::from("HELP: Ctrl-Q = quit");
+        let mut initial_status = String::from("");
         let document = if args.len() > 1 {
             let file_name = &args[1];
             let doc = Document::open(&file_name);
             if doc.is_ok() {
                 doc.unwrap()
             } else {
-                initial_status = format!("ERR: Could not open file: {}", file_name);
+                initial_status = format!("Error: Could not open file: {}", file_name);
                 Document::default()
             }
         } else {
@@ -183,7 +183,7 @@ impl Editor {
                         break;
                     }
                     "replace" => {
-                        
+                        //TODO
                     }
                     "rename" => {
                         if command.len() != 2 {
