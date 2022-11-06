@@ -150,7 +150,7 @@ impl Editor {
                             let mut direction = SearchDirection::Forward;
                             let query = self
                                 .prompt(
-                                    "Search (ESC to cancel, Arrows to navigate): ",
+                                    "find something : ",
                                     |rorlib, key, query| {
                                         let mut moved = false;
                                         match key {
@@ -181,6 +181,9 @@ impl Editor {
                       
                         }
                         break;
+                    }
+                    "replace" => {
+                        
                     }
                     "rename" => {
                         if command.len() != 2 {
