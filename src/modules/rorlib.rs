@@ -143,50 +143,42 @@ impl Editor {
             loop {
                 match &command[0][..] as &str {
                     "find" => {
-                        if command.len() != 2 {
+                        if command.len() != 1 {
                             self.status_message = StatusMessage::from(format!("Unqualified find command:{:?}.",command));
                         } else {
                             let old_position = self.cursor_position.clone();
                             let mut direction = SearchDirection::Forward;
-
-/*
-                            let mut moved = false;
-                            match key {
-                                Key::Right | Key::Down => {
-                                    direction = SearchDirection::Forward;
-                                    editor.move_cursor(Key::Right);
-                                    moved = true
-                                }
-                                Key::Left | Key::Up=> direction=SearchDirection::Backward,
-                                _ => (),
-                            }
-          
-                            if let Some(position) = editor.
-                                    document.
-                                    find(&query, &editor.cursor_position, direction) {
-                                editor.cursor_position = position;
-                                editor.scroll();
-                            } else if moved {
-                                editor.move_cursor(Key::Left);
-                            }
-                                
+                            let query = self
+                                .prompt(
+                                    "Search (ESC to cancel, Arrows to navigate): ",
+                                    |rorlib, key, query| {
+                                        let mut moved = false;
+                                        match key {
+                                            Key::Right | Key::Down => {
+                                                direction = SearchDirection::Forward;
+                                                rorlib.move_cursor(Key::Right);
+                                                moved = true
+                                            }
+                                            Key::Left | Key::Up=> direction=SearchDirection::Backward,
+                                            _ => (),
+                                        }
+                      
+                                        if let Some(position) = rorlib.
+                                                document.
+                                                find(&query, &rorlib.cursor_position, direction) {
+                                                rorlib.cursor_position = position;
+                                                rorlib.scroll();
+                                        } else if moved {
+                                            rorlib.move_cursor(Key::Left);
+                                        }
+                                    },
+                                )
+                                .unwrap_or(None);
                             if query.is_none() {
                                 self.cursor_position = old_position;
                                 self.scroll();
                             }
-
-
-*/
-                            if let Some(result) = self.document.find(&command[1][..]) {
-                                self.status_message = StatusMessage::from(format!("Successful found in {0} lines:{1}", result.len(),command[1]));
-                                let number = 1;
-                                let pos = if let Some(pos) = result.get(number-1) { pos } else { todo!() };
-                                self.cursor_position = *pos;
-                                self.scroll();
-                                let len = result.len();
-                            } else {
-                                self.status_message = StatusMessage::from(format!("Not found :{}.", command[1]));
-                            }
+                      
                         }
                         break;
                     }
@@ -223,7 +215,7 @@ impl Editor {
             if new_name.is_none() {
                 self.status_message = StatusMessage::from("Save aborted.".to_string());
                 return;
-            } else if r.is_match(&new_name.unwrap()){
+            } else if r.is_match(&new_name.as_ref().unwrap()){
                 self.status_message = StatusMessage::from(format!("Unqualified file name"));
                 return;
             }
