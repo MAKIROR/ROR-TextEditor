@@ -183,7 +183,7 @@ impl Editor {
                         break;
                     }
                     "replace" => {
-                        //TODO
+                        //TODO                        
                     }
                     "rename" => {
                         if command.len() != 2 {
@@ -211,6 +211,7 @@ impl Editor {
             }
         Ok(())
     }
+    
     fn save(&mut self) {
         if self.document.file_name.is_none() {
             let r = Regex::new(r"[/\^:]+").unwrap();
