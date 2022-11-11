@@ -11,7 +11,6 @@ if [ -z "`grep "$CONTENT" /etc/profile`" ]; then
     echo "$CONTENT -> /etc/profile"
 else 
     echo 'file /etc/profile already has variables'
-    exit 0
 fi
 
 if [ -z "`grep "$CONTENT" /root/.bashrc`" ]; then
