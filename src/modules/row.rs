@@ -117,38 +117,4 @@ impl Row {
         }
         None
     }
-    pub fn replace(&self, query: &str,value: &str,at: usize, direction: SearchDirection) -> Option<usize> {
-        if at > self.len {
-            return None;
-        }
-        let start = if direction == SearchDirection::Forward {
-            at
-        } else {
-            0
-        };
-        let end = if direction == SearchDirection::Forward {
-            self.len
-        } else {
-            at
-        };
-        #[allow(clippy::integer_arithmetic)]
-        let substring: String = self.string[..].graphemes(true).skip(start).take(end - start).collect();
-        let matching_byte_index = if direction == SearchDirection::Forward {
-            substring.replace(query,value)
-        } else {
-            substring.rfind(query)
-        };
-        if let Some(matching_byte_index) = matching_byte_index {
-            for (grapheme_index, (byte_index, _)) in
-                substring[..].grapheme_indices(true).enumerate()
-            {
-                if matching_byte_index == byte_index {
-                    #[allow(clippy::integer_arithmetic)]
-                    return Some(start + grapheme_index);
-                }
-            }
-        }
-        None
-    }
-    
 }

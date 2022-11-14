@@ -1,12 +1,14 @@
-
 use crate::Terminal;
 use termion::event::Key;
 use crate::Document;
 use crate::Row;
+extern crate clipboard;
 use termion::color;
 use std::time::{Duration,Instant};
 use std::env;
 use regex::Regex;
+use clipboard::ClipboardProvider;
+use clipboard::ClipboardContext;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum SearchDirection {
@@ -102,6 +104,9 @@ impl Editor {
                 if let Some(command) = self.prompt("",|_, _, _|{}).unwrap_or(None) {
                     self.command_board(&command);
                 }
+            }
+            Key::Ctrl('v') => {
+                let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
             }
             Key::Char(c) => {
                 let insert_result = self.document.insert(&self.cursor_position, c);
