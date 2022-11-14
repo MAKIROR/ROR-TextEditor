@@ -10,7 +10,8 @@ termion = "*"
 # { git = "https://gitlab.redox-os.org/Jezza/termion.git", branch = "windows-support" }
 regex = "*"
 unicode-segmentation = "*"
-clipboard = "*"
+arboard = "*"
+
 
 [profile.release]
 panic = 'abort'
