@@ -1,6 +1,0 @@
-event  ('xcb', 'Present', 'CompleteNotify')  is packed
-event  ('xcb', 'Present', 'RedirectNotify')  is packed
-cargo:rerun-if-changed=/root/.cargo/registry/src/github.com-1ecc6299db9ec823/xcb-0.8.2/build.rs
-cargo:rerun-if-changed=/root/.cargo/registry/src/github.com-1ecc6299db9ec823/xcb-0.8.2/rs_client.py
-cargo:rerun-if-changed=/root/.cargo/registry/src/github.com-1ecc6299db9ec823/xcb-0.8.2/xml
-cargo:rerun-if-changed=/root/.cargo/registry/src/github.com-1ecc6299db9ec823/xcb-0.8.2/xcbgen
