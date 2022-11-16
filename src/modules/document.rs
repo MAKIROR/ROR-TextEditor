@@ -138,4 +138,7 @@ impl Document {
         }
         None
     }
+    pub fn get_line(&self, at: &Position) -> String {
+        
+    }
 }
