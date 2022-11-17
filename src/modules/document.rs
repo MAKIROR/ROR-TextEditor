@@ -88,6 +88,15 @@ impl Document {
             return 0;
         }
     }
+    pub fn delete_line(&mut self, at: &Position) -> i32 {
+        let len = self.len();
+        self.rows.remove(at.y);
+        if at.y == 0 {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
     pub fn save(&mut self) -> Result<(), Error> {
         if let Some(file_name) = &self.file_name {
             let mut file = fs::File::create(file_name)?;
@@ -141,7 +150,8 @@ impl Document {
     pub fn get_line(&self, at: &Position) -> Option<String> {
         let mut position = Position { x: at.x, y: at.y };
         if let Some(row) = self.rows.get(position.y) {
-            return Some(row.get_row());
+            let result = Some(row.get_row());
+            return result;
         } else {
             return None;
         }

@@ -125,6 +125,17 @@ impl Editor {
                 if let Some(c) = self.document.get_line(&self.cursor_position) {
                     let mut clipboard = Clipboard::new().unwrap();
                     clipboard.set_text(c.to_string());
+                    if self.document.delete_line(&self.cursor_position) == 0 {
+                        self.move_cursor(Key::Up);
+                        let mut width = if let Some(row) = self.document.row(y - 1) {
+                            row.len()
+                        } else {
+                            0
+                        };
+                        self.cursor_position.x = width;
+                    } else {
+                        self.cursor_position.x = 0;
+                    }
                 } else {
                     self.status_message = StatusMessage::from(format!("Nothing to cut"));
                 }
