@@ -3,7 +3,7 @@ use std::cmp;
 use unicode_segmentation::UnicodeSegmentation;
 
 
-#[derive(Default)]
+#[derive(Default,Clone)]
 pub struct Row {
     string: String,
     len: usize,
@@ -116,5 +116,8 @@ impl Row {
             }
         }
         None
+    }
+    pub fn get_row(&self) -> String {
+        return self.string.clone();
     }
 }

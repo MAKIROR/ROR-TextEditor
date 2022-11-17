@@ -1,0 +1,1 @@
+/home/makiror/works/rortext/main/target/debug/ror: /home/makiror/works/rortext/main/src/main.rs /home/makiror/works/rortext/main/src/modules/document.rs /home/makiror/works/rortext/main/src/modules/rormod.rs /home/makiror/works/rortext/main/src/modules/row.rs /home/makiror/works/rortext/main/src/modules/terminal.rs

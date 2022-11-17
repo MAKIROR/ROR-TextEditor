@@ -138,10 +138,12 @@ impl Document {
         }
         None
     }
-    pub fn get_line(&self, at: &Position) -> String {
+    pub fn get_line(&self, at: &Position) -> Option<String> {
         let mut position = Position { x: at.x, y: at.y };
         if let Some(row) = self.rows.get(position.y) {
-            
+            return Some(row.get_row());
+        } else {
+            return None;
         }
     }
 }

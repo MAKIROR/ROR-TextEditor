@@ -8,8 +8,8 @@
     clippy::else_if_without_else
 )]
 
-#[path = "modules/rorlib.rs"]
-mod rorlib;
+#[path = "modules/rormod.rs"]
+mod rormod;
 
 #[path = "modules/terminal.rs"]
 mod terminal;
@@ -21,10 +21,10 @@ mod document;
 mod row;
 
 use std::io::{self, stdout};
-use rorlib::Editor;
-pub use rorlib::SearchDirection;
+use rormod::Editor;
+pub use rormod::SearchDirection;
 pub use terminal::Terminal;
-pub use rorlib::Position;
+pub use rormod::Position;
 pub use document::Document;
 pub use row::Row;
 
