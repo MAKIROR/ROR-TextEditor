@@ -219,9 +219,6 @@ impl Editor {
                         }
                         break;
                     }
-                    "replace" => {
-                        //TODO                        
-                    }
                     "rename" => {
                         if command.len() != 2 {
                             self.status_message = StatusMessage::from(format!("Unqualified rename command:{:?}.",command));
