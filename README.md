@@ -19,7 +19,7 @@ This is a simple project, Just be a Rust exercise:)
 ```
 Cargo.toml includes some libraries we need to use, version information, etc.    
 main.rs is the main file.It determines what is executed when the program starts.The specific implementation code is in the modules file.    
-I abstracted the process of program startup into the run() function of modules/rorlib.rs. The specific implementation of documents, terminal operations, etc. is in other files of modules, and abstracted into corresponding functions in rorlib.rs
+I abstracted the process of program startup into the run() function of modules/rormod.rs. The specific implementation of documents, terminal operations, etc. is in other files of modules, and abstracted into corresponding functions in rorlib.rs
 
 ## Install on your Linux
 ```
@@ -50,7 +50,7 @@ ror [filename]
 ```
 ![](images/001.png)
 
-## How to use(v0.1.0)
+## How to use(v0.1.1)
 
 ### Move
 You can use the arrow keys to move the cursor.
@@ -63,4 +63,9 @@ Ctrl+d: Command board
 ```
 
 ### Command
+```
+quit //quit command board
+rename [string] //The name of an existing file cannot be changed, only unsaved files can be renamed.
+find //enter search mode, esc to quit
+```
 
