@@ -1,21 +1,24 @@
 [package]
 name = "ror"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-termion = "*" 
+termion = "2.0.1" 
 # { git = "https://gitlab.redox-os.org/Jezza/termion.git", branch = "windows-support" }
-regex = "*"
-unicode-segmentation = "*"
+unicode-segmentation = "1.10.0"
 arboard = "*"
-
+regex = "*"
 
 [profile.release]
-panic = 'abort'
-opt-level = 3
+opt-level = 'z'     # Optimize for size.
+lto = true          # Enable Link Time Optimization
+codegen-units = 1   # Reduce number of codegen units to increase optimizations.
+panic = 'abort'     # Abort on panic
+strip = true        # Strip symbols from binary*
 
 [profile.dev]
 opt-level = 0
+
