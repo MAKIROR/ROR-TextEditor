@@ -31,7 +31,7 @@ Left or Up: go to previous search result
 
 ## Some problems (Try to fix in the next version)
 + The size of some dependent packages will be very large after compilation
-+ The file opened by the startup program cannot be in another path
++ Sometimes the file is not saved and you try to quit, the program will not remind you.
 
 
 
