@@ -54,12 +54,20 @@ ror [filename]
 
 ### Move
 You can use the arrow keys to move the cursor.
+```
+PageUp: Scroll up page
+PageDown: Scroll down page
+Home: Go to the beginning of line
+End: Go to the End of line
+```
 
 ### Hot key
 ```
 Ctrl+s: Save, if the filename is empty, it will let you type
 Ctrl+q: Quit program, press three times to force quit without saving
 Ctrl+d: Command board
+Ctrl+v: Paste the contents of the clipboard
+Ctrl+x: Cut the contents of a line
 ```
 
 ### Command
