@@ -29,6 +29,9 @@ Right or Down:go to the next search result
 Left or Up: go to previous search result
 ```
 
+## Some problems (Try to fix in the next version)
++ The size of some dependent packages will be very large after compilation
++ The file opened by the startup program cannot be in another path
 
 
 
