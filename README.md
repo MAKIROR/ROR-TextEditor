@@ -19,13 +19,14 @@ This is a simple project, Just be a Rust exercise:)
 ```
 Cargo.toml includes some libraries we need to use, version information, etc.    
 main.rs is the main file.It determines what is executed when the program starts.The specific implementation code is in the modules file.    
-I abstracted the process of program startup into the run() function of modules/rormod.rs. The specific implementation of documents, terminal operations, etc. is in other files of modules, and abstracted into corresponding functions in rorlib.rs
+I abstracted the process of program startup into the run() function of modules/rormod.rs. The specific implementation of documents, terminal operations, etc. is in other files of modules.
 
 ## Install on your Linux
 ```
 sudo su
 ```
-Download rortext.tar from 'release' branch. Put it in the directory you want to install, for example:
+Download rortext.tar . Put it in the directory you want to install.    
+http://anan.i234.me:7777/ror/list.html
 ```
 /home/makiror/ror/rortext.tar
 ```
