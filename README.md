@@ -19,12 +19,19 @@ This is a simple project, Just be a Rust exercise:)
 ```
 Cargo.toml includes some libraries we need to use, version information, etc.    
 main.rs is the main file.It determines what is executed when the program starts.The specific implementation code is in the modules file.    
-I abstracted the process of program startup into the run() function of modules/rormod.rs. The specific implementation of documents, terminal operations, etc. is in other files of modules.
+I abstracted the process of program startup into the run() function of modules/rormod.rs. The specific implementation of documents, terminal operations, etc. is in other files of modules.    
+Some dependent libraries are used at this stage, in the future I may write some modules to replace them.
+```
+# in Cargo.toml
+
+[dependencies]
+termion = "2.0.1" 
+unicode-segmentation = "1.10.0"
+arboard = "*"
+regex = "*"
+```
 
 ## Install on your Linux
-```
-sudo su
-```
 Download rortext.tar . Put it in the directory you want to install.    
 http://anan.i234.me:7777/ror/list.html
 ```
