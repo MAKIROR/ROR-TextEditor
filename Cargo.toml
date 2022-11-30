@@ -7,17 +7,16 @@ edition = "2021"
 
 [dependencies]
 termion = "2.0.1" 
-# { git = "https://gitlab.redox-os.org/Jezza/termion.git", branch = "windows-support" }
 unicode-segmentation = "1.10.0"
 arboard = "*"
 regex = "*"
 
 [profile.release]
-opt-level = 'z'     # Optimize for size.
-lto = true          # Enable Link Time Optimization
-codegen-units = 1   # Reduce number of codegen units to increase optimizations.
-panic = 'abort'     # Abort on panic
-strip = true        # Strip symbols from binary*
+opt-level = 'z'
+lto = true
+codegen-units = 1
+panic = 'abort'
+strip = true
 
 [profile.dev]
 opt-level = 0
