@@ -29,6 +29,9 @@ Right or Down:go to the next search result
 Left or Up: go to previous search result
 ```
 
+## Some problems (Try to fix in the next version)
++ The size of some dependent packages will be very large after compilation
++ Sometimes the file is not saved and you try to quit, the program will not remind you.
 
 
 
