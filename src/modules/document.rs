@@ -3,7 +3,6 @@ use crate::Position;
 use std::fs;
 use std::io::{Error, Write};
 use crate::SearchDirection;
-use std::path::Path;
 
 #[derive(Default)]
 pub struct Document {
@@ -98,7 +97,6 @@ impl Document {
         }
     }
     pub fn delete_line(&mut self, at: &Position) -> i32 {
-        let len = self.len();
         self.rows.remove(at.y);
         if at.y == 0 {
             return 1;

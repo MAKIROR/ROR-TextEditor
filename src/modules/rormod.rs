@@ -1,3 +1,5 @@
+#[warn(unused_assignments)]
+
 extern crate clipboard;
 
 use crate::Terminal;
@@ -7,10 +9,8 @@ use crate::Row;
 use termion::color;
 use std::time::{Duration,Instant};
 use std::env;
-use regex::Regex;
 use clipboard::ClipboardProvider;
 use clipboard::ClipboardContext;
-use clipboard::x11_clipboard::Clipboard;
 use std::path::Path;
 
 #[derive(PartialEq, Copy, Clone)]
@@ -280,7 +280,7 @@ impl Editor {
     fn move_cursor(&mut self, key: Key) {
         let Position { mut y, mut x } = self.cursor_position;
         let terminal_height = self.terminal.size().height as usize;
-        let size = self.terminal.size();
+        let _size = self.terminal.size();
         let height = self.document.len();
         let mut width = if let Some(row) = self.document.row(y) {
             row.len()

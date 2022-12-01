@@ -50,7 +50,7 @@ ror [filename]
 ```
 ![](images/001.png)
 
-## How to use(v0.1.1)
+## How to use(v0.1.2)
 
 ### Move
 You can use the arrow keys to move the cursor.
@@ -68,7 +68,5 @@ quit:exit command board
 Find: enter search mode
 rename: rename current file
 ```
-## Some problems (Try to fix in the next version)
-+ The size of some dependent packages will be very large after compilation
-+ Sometimes the file is not saved and you try to quit, the program will not remind you.
-+ "ror [filename]" cannot create a new file
+
+
