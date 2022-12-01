@@ -19,8 +19,6 @@ mod document;
 
 #[path = "modules/row.rs"]
 mod row;
-
-use std::io::{self, stdout};
 use rormod::Editor;
 pub use rormod::SearchDirection;
 pub use terminal::Terminal;

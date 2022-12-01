@@ -7,6 +7,7 @@ use std::time::{Duration,Instant};
 use std::env;
 use regex::Regex;
 use arboard::Clipboard;
+use std::path::Path;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum SearchDirection {
@@ -45,8 +46,22 @@ impl Editor {
             if doc.is_ok() {
                 doc.unwrap()
             } else {
-                initial_status = format!("Error: Could not open file: {}", file_name);
-                Document::default()
+                let path = Path::new(&file_name);
+                if path.is_dir() {
+                    initial_status = format!("Error: Could not open file, it is a folder: {}", file_name);
+                    Document::default()
+                } else if !path.exists() {
+                    let cdoc = Document::open_new_file(&file_name);
+                    if cdoc.is_ok() {
+                        cdoc.unwrap()
+                    } else {
+                        initial_status = format!("Error: Could not create file {}", file_name);
+                        Document::default()
+                    }
+                } else {
+                    initial_status = format!("Error: Could not create file {}", file_name);
+                    Document::default()
+                }
             }
         } else {
             Document::default()

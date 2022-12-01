@@ -1,4 +1,3 @@
-
 use crate::Row;
 use crate::Position;
 use std::fs;
@@ -19,6 +18,14 @@ impl Document {
         for value in contents.lines() {
             rows.push(Row::from(value));
         }
+        Ok(Self {
+            rows,
+            file_name: Some(filename.to_string()),
+            dirty: false,
+        })
+    }
+    pub fn open_new_file(filename: &str) -> Result<Self, std::io::Error> {
+        let mut rows = Vec::new();
         Ok(Self {
             rows,
             file_name: Some(filename.to_string()),
