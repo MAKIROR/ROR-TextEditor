@@ -3,6 +3,7 @@ use crate::Position;
 use std::fs;
 use std::io::{Error, Write};
 use crate::SearchDirection;
+use std::path::Path;
 
 #[derive(Default)]
 pub struct Document {
@@ -32,6 +33,7 @@ impl Document {
             dirty: false,
         })
     }
+    
     pub fn row(&self, index: usize) -> Option<&Row> {
         self.rows.get(index)
     }
@@ -106,6 +108,15 @@ impl Document {
     }
     pub fn save(&mut self) -> Result<(), Error> {
         if let Some(file_name) = &self.file_name {
+            let file_path: Vec<&str> = file_name.split("/").collect();
+            if file_path.len() > 1 {
+                let mut dir = String::new();
+                for i in 0..file_path.len() - 1 {
+                    dir.push_str(file_path[i]);
+                    dir.push_str("/");
+                }
+                std::fs::create_dir_all(dir).unwrap();
+            }
             let mut file = fs::File::create(file_name)?;
             for row in &self.rows {
                 file.write_all(row.as_bytes())?;

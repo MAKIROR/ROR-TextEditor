@@ -8,8 +8,8 @@ edition = "2021"
 [dependencies]
 termion = "2.0.1" 
 unicode-segmentation = "1.10.0"
-arboard = "*"
 regex = "*"
+clipboard = "0.5.0"
 
 [profile.release]
 opt-level = 'z'

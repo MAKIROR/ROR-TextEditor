@@ -1,3 +1,5 @@
+extern crate clipboard;
+
 use crate::Terminal;
 use termion::event::Key;
 use crate::Document;
@@ -6,7 +8,9 @@ use termion::color;
 use std::time::{Duration,Instant};
 use std::env;
 use regex::Regex;
-use arboard::Clipboard;
+use clipboard::ClipboardProvider;
+use clipboard::ClipboardContext;
+use clipboard::x11_clipboard::Clipboard;
 use std::path::Path;
 
 #[derive(PartialEq, Copy, Clone)]
@@ -47,14 +51,15 @@ impl Editor {
                 doc.unwrap()
             } else {
                 let path = Path::new(&file_name);
-                if path.is_dir() {
-                    initial_status = format!("Error: Could not open file, it is a folder: {}", file_name);
-                    Document::default()
-                } else if !path.exists() {
+                if !path.exists() {
                     let cdoc = Document::open_new_file(&file_name);
                     if cdoc.is_ok() {
                         cdoc.unwrap()
-                    } else {
+                    } else if path.is_dir() {
+                        initial_status = format!("Error: Could not open file, it is a folder: {}", file_name);
+                        Document::default()
+                    }
+                     else {
                         initial_status = format!("Error: Could not create file {}", file_name);
                         Document::default()
                     }
@@ -120,8 +125,8 @@ impl Editor {
 
             }
             Key::Ctrl('v') => {
-                let mut clipboard = Clipboard::new().unwrap();
-                let content = clipboard.get_text().unwrap();
+                let mut clipboard: ClipboardContext = ClipboardProvider::new().unwrap();
+                let content = clipboard.get_contents().unwrap();
                 if content == "" {
                     self.status_message = StatusMessage::from(format!("Clipboard is empty"));
                 } else {
@@ -138,8 +143,8 @@ impl Editor {
             }
             Key::Ctrl('x') => {
                 if let Some(c) = self.document.get_line(&self.cursor_position) {
-                    let mut clipboard = Clipboard::new().unwrap();
-                    clipboard.set_text(c.to_string());
+                    let mut clipboard: ClipboardContext = ClipboardProvider::new().unwrap();
+                    clipboard.set_contents(c.to_string());
                     if self.document.delete_line(&self.cursor_position) == 0 {
                         self.move_cursor(Key::Up);
                         let mut width = if let Some(row) = self.document.row(y - 1) {
@@ -238,13 +243,8 @@ impl Editor {
                         if command.len() != 2 {
                             self.status_message = StatusMessage::from(format!("Unqualified rename command:{:?}.",command));
                         } else {
-                            let r = Regex::new(r"[/\^:]+").unwrap();
-                            if r.is_match(command[1]) {
-                                self.status_message = StatusMessage::from(format!("Unqualified file name:{}.",command[1]));
-                            } else {
-                                self.document.file_name = Some(command[1].to_string());
-                                self.status_message = StatusMessage::from(format!("Successfully changed the filename to:{}.",command[1]));
-                            }
+                            self.document.file_name = Some(command[1].to_string());
+                            self.status_message = StatusMessage::from(format!("Successfully changed the filename to:{}.",command[1]));
                         }
                         break;
                     }
@@ -263,13 +263,9 @@ impl Editor {
     
     fn save(&mut self) {
         if self.document.file_name.is_none() {
-            let r = Regex::new(r"[/\^:]+").unwrap();
             let new_name = self.prompt("Save as: ", |_, _, _| {}).unwrap_or(None);
             if new_name.is_none() {
                 self.status_message = StatusMessage::from("Save aborted.".to_string());
-                return;
-            } else if r.is_match(&new_name.as_ref().unwrap()){
-                self.status_message = StatusMessage::from(format!("Unqualified file name"));
                 return;
             }
             self.document.file_name = new_name;
