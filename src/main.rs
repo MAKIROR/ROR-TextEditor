@@ -19,6 +19,10 @@ mod document;
 
 #[path = "modules/row.rs"]
 mod row;
+
+#[path = "modules/highlighting.rs"]
+mod highlighting;
+
 use rormod::Editor;
 pub use rormod::SearchDirection;
 pub use terminal::Terminal;
