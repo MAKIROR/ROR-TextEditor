@@ -3,27 +3,31 @@ use crate::Position;
 use std::fs;
 use std::io::{Error, Write};
 use crate::SearchDirection;
+use crate::FileType;
 
 #[derive(Default)]
 pub struct Document {
     pub file_name: Option<String>,
     rows: Vec<Row>,
     dirty: bool,
+    file_type: FileType,
 }
 
 impl Document {
     pub fn open(filename: &str) -> Result<Self, std::io::Error> {
         let contents = fs::read_to_string(filename)?;
         let mut rows = Vec::new();
+        let file_type = FileType::from(filename);
         for value in contents.lines() {
             let mut row = Row::from(value);            
-            row.highlight(None);        
+            row.highlight(file_type.highlighting_options(), None);
             rows.push(row);
         }
         Ok(Self {
             rows,
             file_name: Some(filename.to_string()),
             dirty: false,
+            file_type,
         })
     }
     pub fn open_new_file(filename: &str) -> Result<Self, std::io::Error> {
@@ -32,6 +36,7 @@ impl Document {
             rows,
             file_name: Some(filename.to_string()),
             dirty: false,
+            file_type: FileType::default(),
         })
     }
     
@@ -52,8 +57,8 @@ impl Document {
         #[allow(clippy::indexing_slicing)]
         let current_row = &mut self.rows[at.y];
         let mut new_row = current_row.split(at.x);
-        current_row.highlight(None);            
-        new_row.highlight(None);
+        current_row.highlight(self.file_type.highlighting_options(), None);            
+        new_row.highlight(self.file_type.highlighting_options(), None);
         #[allow(clippy::integer_arithmetic)]
         self.rows.insert(at.y + 1, new_row);
     }
@@ -69,13 +74,13 @@ impl Document {
         if at.y == self.len() {
             let mut row = Row::default();
             row.insert(0, c);
-            row.highlight(None);
+            row.highlight(self.file_type.highlighting_options(), None);
             self.rows.push(row);
             return 0;
         } else {
             let row = self.rows.get_mut(at.y).unwrap();
             row.insert(at.x, c);
-            row.highlight(None);
+            row.highlight(self.file_type.highlighting_options(), None);
             return 0;
         }
     }
@@ -89,7 +94,7 @@ impl Document {
             let next_row = self.rows.remove(at.y + 1);
             let row = self.rows.get_mut(at.y).unwrap();
             row.append(&next_row);
-            row.highlight(None);
+            row.highlight(self.file_type.highlighting_options(), None);
             return 0;
         } else if at.y <= len && self.rows.get_mut(at.y).unwrap().len() == 0 {
             let row = self.rows.get_mut(at.y).unwrap();
@@ -99,10 +104,10 @@ impl Document {
             let row = self.rows.get_mut(at.y).unwrap();
             if at.x != 0 || at.y == 0 {
                 row.delete(at.x -1);
-                row.highlight(None);
+                row.highlight(self.file_type.highlighting_options(), None);
             } else {
                 row.delete(at.x);
-                row.highlight(None);
+                row.highlight(self.file_type.highlighting_options(), None);
             }
             return 0;
         }
@@ -127,10 +132,13 @@ impl Document {
                 std::fs::create_dir_all(dir).unwrap();
             }
             let mut file = fs::File::create(file_name)?;
-            for row in &self.rows {
+            self.file_type = FileType::from(file_name);            
+            for row in &mut self.rows {
                 file.write_all(row.as_bytes())?;
                 file.write_all(b"\n")?;
+                row.highlight(self.file_type.highlighting_options(), None)
             }
+            self.file_type = FileType::from(file_name);
             self.dirty = false;
         }
         Ok(())
@@ -185,7 +193,10 @@ impl Document {
     }
     pub fn highlight(&mut self, word: Option<&str>) {            
         for row in &mut self.rows {            
-            row.highlight(word);            
+            row.highlight(self.file_type.highlighting_options(), word);         
         }            
+    }
+    pub fn file_type(&self) -> String {            
+        self.file_type.name()            
     }
 }

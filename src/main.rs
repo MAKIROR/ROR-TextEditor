@@ -23,12 +23,17 @@ mod row;
 #[path = "modules/highlighting.rs"]
 mod highlighting;
 
+#[path = "modules/filetype.rs"]
+mod filetype;
+
 use rormod::Editor;
 pub use rormod::SearchDirection;
 pub use terminal::Terminal;
 pub use rormod::Position;
 pub use document::Document;
 pub use row::Row;
+pub use filetype::FileType;
+pub use filetype::HighlightingOptions;
 
 fn main() {
     Editor::default().run();
