@@ -175,8 +175,13 @@ impl Editor {
                 if self.cursor_position.x > 0 || self.cursor_position.y > 0 {
                     let delete_result = self.document.delete(&self.cursor_position);
                     if delete_result == 1 {
+                        let up = if let Some(row) = self.document.row(y+1) {
+                            row.len()
+                        } else {
+                            0
+                        };
                         self.move_cursor(Key::Up);
-                        x = width;
+                        self.cursor_position.x = up;
                     } else {
                         self.move_cursor(Key::Left);
                     }

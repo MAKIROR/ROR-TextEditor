@@ -106,7 +106,7 @@ impl Document {
             return 1;
         } else {
             let row = self.rows.get_mut(at.y).unwrap();
-            if at.x != 0 || at.y == 0 {
+            if at.x > 1 || at.y == 0 {
                 row.delete(at.x -1);
             } else {
                 row.delete(at.x);
