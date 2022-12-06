@@ -27,6 +27,7 @@ pub struct Editor {
     offset: Position,
     status_message: StatusMessage,
     quit_times: u8,
+    highlighted_word: Option<String>,
 }
 
 #[derive(Default,Copy, Clone)]
@@ -80,6 +81,7 @@ impl Editor {
             offset: Position::default(),
             status_message: StatusMessage::from(initial_status),
             quit_times: QUIT_TIMES,
+            highlighted_word: None,
         }
     }
 
@@ -228,7 +230,7 @@ impl Editor {
                                         } else if moved {
                                             rormod.move_cursor(Key::Left);
                                         }
-                                        rormod.document.highlight(Some(query));
+                                        rormod.highlighted_word = Some(query.to_string());
                                     },
                                 )
                                 .unwrap_or(None);
@@ -236,7 +238,7 @@ impl Editor {
                                 self.cursor_position = old_position;
                                 self.scroll();
                             }
-                            self.document.highlight(None);
+                            self.highlighted_word = None;
                         }
                         break;
                     }
@@ -345,7 +347,7 @@ impl Editor {
 
         self.cursor_position = Position { x, y }
     }
-    fn refresh_screen(&self) -> Result<(), std::io::Error> {
+    fn refresh_screen(&mut self) -> Result<(), std::io::Error> {
         Terminal::cursor_hide();          
         Terminal::cursor_position(&Position::default());
 
@@ -353,6 +355,9 @@ impl Editor {
             Terminal::clear_screen();  
             println!("Exit the program. Goodbye :D\r");
         } else {
+            self.document.highlight(            
+            &self.highlighted_word,            
+            Some(self.offset.y.saturating_add(self.terminal.size().height as usize),),);
             self.draw_rows();
             self.draw_status_bar();
             self.draw_message_bar();
@@ -415,7 +420,7 @@ impl Editor {
         );
 
         let line_indicator = format!(
-            "{} | {}/{}",            
+            "{} | {}/{}",
             self.document.file_type(),
             self.cursor_position.y.saturating_add(1),
             self.document.len()
