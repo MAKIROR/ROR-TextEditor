@@ -169,12 +169,13 @@ impl Editor {
                 } else {
                     self.move_cursor(Key::Right);
                 }
-
             }
             Key::Backspace => {
                 if self.cursor_position.x > 0 || self.cursor_position.y > 0 {
                     let delete_result = self.document.delete(&self.cursor_position);
-                    if delete_result == 1 {
+                    if delete_result == 0 {
+                        self.move_cursor(Key::Left);
+                    } else if delete_result == 1 {
                         let up = if let Some(row) = self.document.row(y+1) {
                             row.len()
                         } else {
@@ -182,8 +183,6 @@ impl Editor {
                         };
                         self.move_cursor(Key::Up);
                         self.cursor_position.x = up;
-                    } else {
-                        self.move_cursor(Key::Left);
                     }
                 }
             }
@@ -227,11 +226,10 @@ impl Editor {
                                             _ => (),
                                         }
                       
-                                        if let Some(position) = rormod.
-                                                document.
-                                                find(&query, &rormod.cursor_position, direction) {
-                                                rormod.cursor_position = position;
-                                                rormod.scroll();
+                                        if let Some(position) = rormod.document.find(&query, &rormod.cursor_position, direction)
+                                        {
+                                            rormod.cursor_position = position;
+                                            rormod.scroll();
                                         } else if moved {
                                             rormod.move_cursor(Key::Left);
                                         }

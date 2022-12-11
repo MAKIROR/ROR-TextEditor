@@ -10,7 +10,7 @@ pub struct HighlightingOptions {
     characters: bool,
     comments: bool,
     multiline_comments: bool,
-    primary_keywords: Vec<String>,            
+    primary_keywords: Vec<String>,
     secondary_keywords: Vec<String>,
 }
 
@@ -27,14 +27,17 @@ impl FileType {
     pub fn name(&self) -> String {
         self.name.clone()
     }
+    pub fn highlighting_options(&self) -> &HighlightingOptions {
+        &self.hl_opts
+    }
     pub fn from(file_name: &str) -> Self {
         if file_name.ends_with(".rs") {
             return Self {
                 name: String::from("Rust"),
-                hl_opts: HighlightingOptions {            
-                    numbers: true,            
-                    strings: true,   
-                    characters: true,         
+                hl_opts: HighlightingOptions {
+                    numbers: true,
+                    strings: true,
+                    characters: true,
                     comments: true,
                     multiline_comments: true,
                     primary_keywords: vec![
@@ -111,30 +114,28 @@ impl FileType {
         }
         Self::default()
     }
-    pub fn highlighting_options(&self) -> &HighlightingOptions {            
-        &self.hl_opts       
-    }
 }
+
 impl HighlightingOptions {
     pub fn numbers(&self) -> bool {
         self.numbers
     }
-    pub fn strings(&self) -> bool {            
-        self.strings            
+    pub fn strings(&self) -> bool {
+        self.strings
     }
-    pub fn characters(&self) -> bool {            
-        self.characters            
+    pub fn characters(&self) -> bool {
+        self.characters
     }
-    pub fn comments(&self) -> bool {            
-        self.comments            
+    pub fn comments(&self) -> bool {
+        self.comments
     }
-    pub fn primary_keywords(&self) -> &Vec<String> {            
-        &self.primary_keywords            
-    }            
-    pub fn secondary_keywords(&self) -> &Vec<String> {            
-        &self.secondary_keywords            
+    pub fn primary_keywords(&self) -> &Vec<String> {
+        &self.primary_keywords
     }
-    pub fn multiline_comments(&self) -> bool {            
-        self.multiline_comments            
+    pub fn secondary_keywords(&self) -> &Vec<String> {
+        &self.secondary_keywords
+    }
+    pub fn multiline_comments(&self) -> bool {
+        self.multiline_comments
     }
 }

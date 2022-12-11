@@ -66,18 +66,16 @@ impl Document {
         self.dirty = true;
         if c == '\n' {
             self.insert_line(at);
-            self.unhighlight_rows(at.y);
             return 1;
         } else if at.y == self.rows.len() {
             let mut row = Row::default();
             row.insert(0, c);
             self.rows.push(row);
-            self.unhighlight_rows(at.y);
             return 0;
         } else {
-            let row = self.rows.get_mut(at.y).unwrap();
+            #[allow(clippy::indexing_slicing)]
+            let row = &mut self.rows[at.y];
             row.insert(at.x, c);
-            self.unhighlight_rows(at.y);
             return 0;
         }
     }
@@ -98,7 +96,7 @@ impl Document {
             let row = self.rows.get_mut(at.y).unwrap();
             row.append(&next_row);
             self.unhighlight_rows(at.y);
-            return 0;
+            return 2;
         } else if at.y <= len && self.rows.get_mut(at.y).unwrap().len() == 0 {
             let row = self.rows.get_mut(at.y).unwrap();
             row.delete(at.x);

@@ -180,7 +180,7 @@ impl Row {
                 if let Some(next_index) = search_match.checked_add(word[..].graphemes(true).count())
                 {
                     #[allow(clippy::indexing_slicing)]
-                    for i in index.saturating_add(search_match)..next_index {
+                    for i in search_match..next_index {
                         self.highlighting[i] = highlighting::Type::Match;
                     }
                     index = next_index;
@@ -190,6 +190,7 @@ impl Row {
             }
         }
     }
+
     fn highlight_str(
         &mut self,
         index: &mut usize,
@@ -271,6 +272,7 @@ impl Row {
             highlighting::Type::SecondaryKeywords,
         )
     }
+
     fn highlight_char(
         &mut self,
         index: &mut usize,
@@ -346,6 +348,7 @@ impl Row {
         }
         false
     }
+
     fn highlight_string(
         &mut self,
         index: &mut usize,
@@ -371,7 +374,6 @@ impl Row {
         }
         false
     }
-
     fn highlight_number(
         &mut self,
         index: &mut usize,
@@ -410,17 +412,17 @@ impl Row {
         start_with_comment: bool,
     ) -> bool {
         let chars: Vec<char> = self.string.chars().collect();
-        if self.is_highlighted && word.is_none() {            
-            if let Some(hl_type) = self.highlighting.last() {            
-                if *hl_type == highlighting::Type::MultilineComment            
-                    && self.string.len() > 1            
-                    && self.string[self.string.len() - 2..] == *"*/"            
-                {            
-                    return true;            
-                }            
-            }            
-            return false;            
-        }            
+        if self.is_highlighted && word.is_none() {
+            if let Some(hl_type) = self.highlighting.last() {
+                if *hl_type == highlighting::Type::MultilineComment
+                    && self.string.len() > 1
+                    && self.string[self.string.len() - 2..] == *"*/"
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
         self.highlighting = Vec::new();
         let mut index = 0;
         let mut in_ml_comment = start_with_comment;
@@ -436,18 +438,17 @@ impl Row {
             index = closing_index;
         }
         while let Some(c) = chars.get(index) {
-            if self.highlight_multiline_comment(&mut index, &opts, *c, &chars) {            
-                in_ml_comment = true;            
-                continue;            
-            }            
+            if self.highlight_multiline_comment(&mut index, &opts, *c, &chars) {
+                in_ml_comment = true;
+                continue;
+            }
             in_ml_comment = false;
             if self.highlight_char(&mut index, opts, *c, &chars)
                 || self.highlight_comment(&mut index, opts, *c, &chars)
-                || self.highlight_multiline_comment(&mut index, &opts, *c, &chars)
-                || self.highlight_string(&mut index, opts, *c, &chars)
-                || self.highlight_secondary_keywords(&mut index, &opts, &chars)
-                || self.highlight_number(&mut index, opts, *c, &chars)
                 || self.highlight_primary_keywords(&mut index, &opts, &chars)
+                || self.highlight_secondary_keywords(&mut index, &opts, &chars)
+                || self.highlight_string(&mut index, opts, *c, &chars)
+                || self.highlight_number(&mut index, opts, *c, &chars)
             {
                 continue;
             }
@@ -455,10 +456,10 @@ impl Row {
             index += 1;
         }
         self.highlight_match(word);
-        if in_ml_comment && &self.string[self.string.len().saturating_sub(2)..] != "*/" {            
-            return true;            
-        }         
-        self.is_highlighted = true;   
+        if in_ml_comment && &self.string[self.string.len().saturating_sub(2)..] != "*/" {
+            return true;
+        }
+        self.is_highlighted = true;
         false
     }
 }
