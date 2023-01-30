@@ -18,7 +18,6 @@ impl Document {
         let contents = fs::read_to_string(filename)?;
         let mut rows = Vec::new();
         let file_type = FileType::from(filename);
-        let mut start_with_comment = false;
         for value in contents.lines() {
             rows.push(Row::from(value));
         }
@@ -30,7 +29,7 @@ impl Document {
         })
     }
     pub fn open_new_file(filename: &str) -> Result<Self, std::io::Error> {
-        let mut rows = Vec::new();
+        let rows = Vec::new();
         Ok(Self {
             rows,
             file_name: Some(filename.to_string()),
@@ -183,7 +182,7 @@ impl Document {
         None
     }
     pub fn get_line(&self, at: &Position) -> Option<String> {
-        let mut position = Position { x: at.x, y: at.y };
+        let position = Position { x: at.x, y: at.y };
         if let Some(row) = self.rows.get(position.y) {
             let result = Some(row.get_row());
             return result;

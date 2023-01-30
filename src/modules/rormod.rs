@@ -100,8 +100,8 @@ impl Editor {
     }
 
     fn match_key(&mut self) -> Result<(), std::io::Error> {
-        let Position { y, mut x } = self.cursor_position;
-        let width = if let Some(row) = self.document.row(y) {
+        let Position { y, x: _ } = self.cursor_position;
+        if let Some(row) = self.document.row(y) {
             row.len()
         } else {
             0
@@ -122,9 +122,8 @@ impl Editor {
             Key::Ctrl('s') => self.save(),
             Key::Ctrl('d') => {
                 if let Some(command) = self.prompt("",|_, _, _|{}).unwrap_or(None) {
-                    self.command_board(&command);
+                    self.command_board(&command)?;
                 }
-
             }
             Key::Ctrl('v') => {
                 let mut clipboard: ClipboardContext = ClipboardProvider::new().unwrap();
@@ -133,7 +132,7 @@ impl Editor {
                     self.status_message = StatusMessage::from(format!("Clipboard is empty"));
                 } else {
                     let bytes = content.as_bytes();
-                    for (i, &item) in bytes.iter().enumerate() {
+                    for (_, &item) in bytes.iter().enumerate() {
                         let insert_result = self.document.insert(&self.cursor_position, item as char);
                         if insert_result == 1 {
                             self.move_cursor(Key::Down);
@@ -146,10 +145,10 @@ impl Editor {
             Key::Ctrl('x') => {
                 if let Some(c) = self.document.get_line(&self.cursor_position) {
                     let mut clipboard: ClipboardContext = ClipboardProvider::new().unwrap();
-                    clipboard.set_contents(c.to_string());
+                    let _ = clipboard.set_contents(c.to_string());
                     if self.document.delete_line(&self.cursor_position) == 0 {
                         self.move_cursor(Key::Up);
-                        let mut width = if let Some(row) = self.document.row(y - 1) {
+                        let width = if let Some(row) = self.document.row(y - 1) {
                             row.len()
                         } else {
                             0

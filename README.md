@@ -3,7 +3,7 @@ A terminal text editor.
 
 
 ## Project structure
-This is a simple project, Just be a Rust exercise:)
+Just be a Rust exercise:)
 ```
 ./
 ├── Cargo.lock
