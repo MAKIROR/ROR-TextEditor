@@ -4,6 +4,7 @@ A terminal text editor.
 
 ## Project structure
 Just be a Rust exercise:)
+Not original, see:https://www.philippflenker.com/hecto/
 ```
 ./
 ├── Cargo.lock
