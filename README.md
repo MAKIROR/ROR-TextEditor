@@ -36,7 +36,7 @@ Run set.sh to set environment variables:
 ```
 sudo ./set.sh
 or
-sudo bash ./set.sh
+sudo bash set.sh
 ```
 try to start it when done.If successful you will see a screen like this
 ```
@@ -59,7 +59,7 @@ Ctrl+d: Command board
 ### Command
 ```
 quit:exit command board
-Find: enter search mode
+find: enter search mode
 rename: rename current file
 ```
 
