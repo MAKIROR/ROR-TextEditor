@@ -20,7 +20,7 @@ original see:https://www.philippflenker.com/hecto/
 ```    
 
 ## Install on your Linux
-Download rortext.tar from http://702j2c2.oicp.vip:7777/ror/list.html . Put it in the directory you want to install, for example:
+Download rortext.tar from http://owenowen.vicp.net:7777/ror/list.html . Put it in the directory you want to install, for example:
 ```
 /home/makiror/ror/rortext.tar
 ```
